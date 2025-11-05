@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  api:
+    build:
+      context: ./src/serve
+      dockerfile: Dockerfile
+    container_name: wine_api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./deployed_model:/app/deployed_model:ro
+      - ./artifacts:/app/artifacts:ro
+    environment:
+      - MODEL_PATH=/app/deployed_model/model.pkl
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin

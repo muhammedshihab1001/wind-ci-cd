@@ -1,0 +1,36 @@
+# --- Python cache ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- Virtual environment ---
+venv/
+.venv/
+
+# --- OS / Editor files ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Build artifacts ---
+build/
+dist/
+*.egg-info/
+
+# --- Model artifacts (do NOT track trained models in git) ---
+artifacts/
+deployed_model/
+
+# --- Logs ---
+*.log
+
+# --- Environment / config files that store secrets ---
+.env
+*.env
+
+# --- Docker leftover layers (optional) ---
+*.tar
+
+# --- Jupyter checkpoints (if you use notebooks) ---
+.ipynb_checkpoints/
