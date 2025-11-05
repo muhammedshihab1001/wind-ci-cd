@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,27 +17,20 @@ concurrency:
 jobs:
   train-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
-      # for PRs from forks, fetch depth=0 helps if you need history; default is fine here
         uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
-          cache: 'pip'
-          cache-dependency-path: 'requirements.txt'
+          python-version: "3.13"
+          cache: "pip"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      # (Optional) add tests here if you create them later
-      # - name: Run tests
-      #   run: pytest -q
+          pip install scikit-learn pandas numpy joblib flask prometheus-client pytest
 
       - name: Train model
         run: python src/train.py
@@ -47,7 +41,6 @@ jobs:
           name: artifacts
           path: artifacts/
 
-      # Deploy/gate step runs only on push (not on PR)
-      - name: Gate & deploy (copy into deployed_model/)
-        if: ${{ github.event_name == 'push' }}
+      - name: Gate & deploy (main branch only)
+        if: github.ref == 'refs/heads/main'
         run: python src/compare_and_deploy.py || true
