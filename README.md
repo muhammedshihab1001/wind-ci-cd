@@ -1,4 +1,4 @@
-# Wine Classification CI/CD Project (Simple Version)
+# Wine Classification CI/CD Project
 
 This project trains a machine learning model on the **Wine dataset** and serves predictions through a **Flask API**.  
 The pipeline includes:
