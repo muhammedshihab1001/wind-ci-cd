@@ -3,27 +3,44 @@ name: Wine ML CI/CD
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wine-ml-cicd-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   train-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
+      # for PRs from forks, fetch depth=0 helps if you need history; default is fine here
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
 
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # (Optional) add tests here if you create them later
+      # - name: Run tests
+      #   run: pytest -q
+
       - name: Train model
-        run: |
-          python src/train.py
+        run: python src/train.py
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -31,7 +48,7 @@ jobs:
           name: artifacts
           path: artifacts/
 
+      # Deploy/gate step runs only on push (not on PR)
       - name: Gate & deploy (copy into deployed_model/)
-        run: |
-          python src/compare_and_deploy.py || true
-
+        if: ${{ github.event_name == 'push' }}
+        run: python src/compare_and_deploy.py || true
