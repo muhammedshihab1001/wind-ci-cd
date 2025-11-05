@@ -6,7 +6,4 @@ The pipeline includes:
 - Comparing new accuracy with previous version
 - Deploying the model if performance improves
 - Serving predictions via REST API
-- Basic monitoring with Prometheus & Grafana (optional)
-
-No MLflow is used.
-
+- Basic monitoring with Prometheus & Grafana
